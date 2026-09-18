@@ -10,6 +10,8 @@ from app.adapters.configured import (
     MaerskAdapter,
     MscAdapter,
     OneAdapter,
+    YangMingAdapter,
+    ZimAdapter,
 )
 from app.models import CarrierInfo
 
@@ -22,6 +24,8 @@ READY = [
     ("EVERGREEN", EvergreenAdapter),
     ("HMM", HmmAdapter),
     ("HAPAG", HapagLloydAdapter),
+    ("ZIM", ZimAdapter),
+    ("YANGMING", YangMingAdapter),
 ]
 
 RESERVED = [
