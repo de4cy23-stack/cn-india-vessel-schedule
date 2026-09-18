@@ -37,6 +37,7 @@ class CarrierAdapter(ABC):
         self.oauth_client_secret = oauth_client_secret
         self.oauth_scope = oauth_scope
 
+        self.extra_headers: dict[str, str] = {}
         self._cached_access_token = ""
         self._cached_access_token_expires_at = 0.0
 
@@ -52,6 +53,16 @@ class CarrierAdapter(ABC):
             )
         )
         return bool(self.base_url and auth_configured)
+
+    @property
+    def auth_mode(self) -> str:
+        if self.bearer_token:
+            return "bearer"
+        if self.oauth_token_url and self.oauth_client_id and self.oauth_client_secret:
+            return "oauth2_client_credentials"
+        if self.api_key:
+            return "api_key"
+        return "none"
 
     async def _oauth_access_token(self) -> str:
         if self.bearer_token:
@@ -100,7 +111,10 @@ class CarrierAdapter(ABC):
         return token
 
     async def headers(self) -> dict[str, str]:
-        headers: dict[str, str] = {"Accept": "application/json"}
+        headers: dict[str, str] = {
+            "Accept": "application/json",
+            **self.extra_headers,
+        }
 
         if self.api_key:
             headers[self.api_key_header] = self.api_key
