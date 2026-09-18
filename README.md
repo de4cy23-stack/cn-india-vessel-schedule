@@ -56,7 +56,7 @@ uvicorn app.main:app --reload
 
 打开：
 
-- Swagger: http://127.0.0.1:8000/docs
+- Web 查询页: http://127.0.0.1:8000/\n- Swagger: http://127.0.0.1:8000/docs
 - 港口: http://127.0.0.1:8000/ports
 - 船司: http://127.0.0.1:8000/carriers
 
