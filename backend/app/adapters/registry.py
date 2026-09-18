@@ -4,9 +4,11 @@ import os
 
 from app.adapters.configured import (
     CmaCgmAdapter,
+    EvergreenAdapter,
     HapagLloydAdapter,
     HmmAdapter,
     MaerskAdapter,
+    MscAdapter,
     OneAdapter,
 )
 from app.models import CarrierInfo
@@ -14,27 +16,21 @@ from app.models import CarrierInfo
 
 READY = [
     ("MAERSK", MaerskAdapter),
+    ("MSC", MscAdapter),
     ("CMACGM", CmaCgmAdapter),
     ("ONE", OneAdapter),
+    ("EVERGREEN", EvergreenAdapter),
     ("HMM", HmmAdapter),
     ("HAPAG", HapagLloydAdapter),
 ]
 
 RESERVED = [
     CarrierInfo(
-        slug="msc",
-        name="MSC",
-        code="MSCU",
-        status="reserved",
-        integration="official/public interface pending verification",
-        configured=False,
-    ),
-    CarrierInfo(
         slug="cosco",
         name="COSCO SHIPPING Lines",
         code="COSU",
         status="reserved",
-        integration="official/public interface pending verification",
+        integration="official website schedule; stable API access not yet verified",
         configured=False,
     ),
     CarrierInfo(
@@ -42,15 +38,7 @@ RESERVED = [
         name="OOCL",
         code="OOLU",
         status="reserved",
-        integration="official/public interface pending verification",
-        configured=False,
-    ),
-    CarrierInfo(
-        slug="evergreen",
-        name="Evergreen Marine",
-        code="EGLV",
-        status="reserved",
-        integration="official/public interface pending verification",
+        integration="official website schedule; stable API access not yet verified",
         configured=False,
     ),
 ]
