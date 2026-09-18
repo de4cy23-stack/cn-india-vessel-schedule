@@ -9,10 +9,10 @@ This project prefers official carrier APIs over website scraping.
 | ONE | ONE Developer Portal - Point-to-Point Schedule | Adapter implemented, endpoint supplied by subscription | DCSA compliant v1.0.9 |
 | HMM | HMM API Portal - Port-to-Port Schedule | Adapter implemented, endpoint supplied by subscription | Portal documents a 300 calls/hour limit for Port-to-Port Schedule |
 | Hapag-Lloyd | API Portal - Commercial Schedule | Adapter implemented, endpoint supplied by subscription | Official API credentials/endpoints required |
-| MSC | Official/public source still being validated | Reserved | Do not depend on an undocumented web endpoint |
+| MSC | MSC Developer Portal - DCSA Commercial Schedules | Adapter implemented, endpoint supplied by onboarding | MSC states Point-to-Point is live and DCSA compliant |
 | COSCO | Official/public source still being validated | Reserved | Do not depend on an undocumented web endpoint |
 | OOCL | Official/public source still being validated | Reserved | Do not depend on an undocumented web endpoint |
-| Evergreen | Official/public source still being validated | Reserved | Do not depend on an undocumented web endpoint |
+| Evergreen | DCSA Commercial Schedules 1.0 implementation | Adapter implemented, endpoint supplied by onboarding | DCSA lists Commercial Schedules 1.0 as implemented |
 
 ## Why DCSA is the internal model
 
