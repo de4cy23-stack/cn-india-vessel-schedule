@@ -7,13 +7,16 @@ from pydantic import BaseModel, Field
 
 
 CarrierStatus = Literal["ready", "reserved", "disabled"]
+QueryStatus = Literal["ok", "error", "disabled"]
 
 
 class ScheduleLeg(BaseModel):
+    sequence: int | None = None
     pol: str | None = None
     pod: str | None = None
     vessel: str | None = None
     voyage: str | None = None
+    service: str | None = None
     etd: datetime | None = None
     eta: datetime | None = None
 
@@ -49,3 +52,21 @@ class CarrierInfo(BaseModel):
     code: str
     status: CarrierStatus
     integration: str
+    configured: bool = False
+
+
+class CarrierQueryStatus(BaseModel):
+    carrier: str
+    code: str
+    status: QueryStatus
+    count: int = 0
+    error: str | None = None
+
+
+class ScheduleSearchResponse(BaseModel):
+    origin: str
+    destination: str
+    date_from: date
+    date_to: date
+    results: list[Schedule] = Field(default_factory=list)
+    carriers: list[CarrierQueryStatus] = Field(default_factory=list)
