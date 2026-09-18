@@ -21,7 +21,7 @@
 - `Mundra` / `INMUN`
 - Chennai、Pipavav、Hazira、Kolkata
 
-## 首批船司
+## 当前船司
 
 | 船司 | Code | 状态 | 数据方式 |
 |---|---|---|---|
@@ -34,6 +34,8 @@
 | COSCO | COSU | 预留 | 待验证稳定官方接口 |
 | OOCL | OOLU | 预留 | 待验证稳定官方接口 |
 | Evergreen | EGLV | Adapter 已实现 | 官方 DCSA Commercial Schedules |
+| ZIM | ZIMU | Adapter 已实现 | 官方 DCSA Commercial Schedules Point-to-Point |
+| Yang Ming | YMLU | Adapter 已实现 | 官方 DCSA Commercial Schedules Point-to-Point |
 
 **Adapter 已实现不等于无需凭证即可实时查询。** 各船司的 Developer/API Portal 仍可能要求订阅、API Key 或 OAuth2 凭证。
 
@@ -56,7 +58,8 @@ uvicorn app.main:app --reload
 
 打开：
 
-- Web 查询页: http://127.0.0.1:8000/\n- Swagger: http://127.0.0.1:8000/docs
+- Web 查询页: http://127.0.0.1:8000/
+- Swagger: http://127.0.0.1:8000/docs
 - 港口: http://127.0.0.1:8000/ports
 - 船司: http://127.0.0.1:8000/carriers
 
