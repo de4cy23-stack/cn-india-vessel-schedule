@@ -20,6 +20,11 @@ class EnvDcsaAdapter(GenericDcsaAdapter):
             base_url=os.getenv(f"{prefix}_BASE_URL", self.default_base_url),
             api_key=os.getenv(f"{prefix}_API_KEY", ""),
             api_key_header=os.getenv(f"{prefix}_API_KEY_HEADER", "Authorization"),
+            bearer_token=os.getenv(f"{prefix}_BEARER_TOKEN", ""),
+            oauth_token_url=os.getenv(f"{prefix}_OAUTH_TOKEN_URL", ""),
+            oauth_client_id=os.getenv(f"{prefix}_OAUTH_CLIENT_ID", ""),
+            oauth_client_secret=os.getenv(f"{prefix}_OAUTH_CLIENT_SECRET", ""),
+            oauth_scope=os.getenv(f"{prefix}_OAUTH_SCOPE", ""),
         )
 
         self.point_to_point_path = os.getenv(
@@ -50,8 +55,8 @@ class MaerskAdapter(EnvDcsaAdapter):
     default_path = "/products/ocean-products"
     default_origin_param = "origin"
     default_destination_param = "destination"
-    # Maersk's Ocean Products endpoint is not a byte-for-byte DCSA endpoint.
-    # Date parameter names are configurable because API product versions differ.
+    # The public point-to-point example uses origin/destination plus
+    # vesselOperatorCarrierCode. Date parameter names can differ by product version.
     default_date_from_param = ""
     default_date_to_param = ""
 
