@@ -13,6 +13,7 @@ class EnvDcsaAdapter(GenericDcsaAdapter):
     default_destination_param: str = "placeOfDelivery"
     default_date_from_param: str = "departureStartDate"
     default_date_to_param: str = "departureEndDate"
+    dcsa_compatible: bool = True
 
     def __init__(self):
         prefix = self.env_prefix
@@ -45,6 +46,11 @@ class EnvDcsaAdapter(GenericDcsaAdapter):
         self.date_from_param = date_from or None
         self.date_to_param = date_to or None
 
+        if self.dcsa_compatible:
+            api_version = os.getenv(f"{prefix}_API_VERSION", "1").strip()
+            if api_version:
+                self.extra_headers["API-Version"] = api_version
+
 
 class MaerskAdapter(EnvDcsaAdapter):
     slug = "maersk"
@@ -55,10 +61,9 @@ class MaerskAdapter(EnvDcsaAdapter):
     default_path = "/products/ocean-products"
     default_origin_param = "origin"
     default_destination_param = "destination"
-    # The public point-to-point example uses origin/destination plus
-    # vesselOperatorCarrierCode. Date parameter names can differ by product version.
     default_date_from_param = ""
     default_date_to_param = ""
+    dcsa_compatible = False
 
     def __init__(self):
         super().__init__()
@@ -82,7 +87,6 @@ class MscAdapter(EnvDcsaAdapter):
     name = "MSC"
     code = "MSCU"
     env_prefix = "MSC"
-    # MSC states its Point-to-Point Commercial Schedules endpoint is live and DCSA compliant.
     default_path = "/v1/point-to-point-routes"
 
 
@@ -107,6 +111,7 @@ class HmmAdapter(EnvDcsaAdapter):
     name = "HMM"
     code = "HDMU"
     env_prefix = "HMM"
+    default_path = "/v1/point-to-point-routes"
 
 
 class HapagLloydAdapter(EnvDcsaAdapter):
