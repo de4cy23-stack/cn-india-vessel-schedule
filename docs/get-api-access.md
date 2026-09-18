@@ -89,3 +89,28 @@ A carrier is considered fully live only after all four stages pass:
 2. authentication accepted
 3. schedule response returned
 4. response normalized into vessel/voyage/ETD/ETA
+
+
+### 4. ZIM
+
+ZIM exposes a Vessel Schedule API product in its official API portal. Production API access requires registration/approval; ZIM documents OAuth2 Client Credentials. Its portal also exposes a Vessel Schedule Sandbox.
+
+Configure the exact gateway/token URLs issued by ZIM:
+
+```env
+ZIM_ENABLED=true
+ZIM_BASE_URL=...
+ZIM_OAUTH_TOKEN_URL=...
+ZIM_OAUTH_CLIENT_ID=...
+ZIM_OAUTH_CLIENT_SECRET=...
+```
+
+### 5. Yang Ming
+
+DCSA currently lists Yang Ming as certified for Commercial Schedules Point-to-Point. Use the official Yang Ming API/e-Solution onboarding details for the gateway and credentials:
+
+```env
+YANGMING_ENABLED=true
+YANGMING_BASE_URL=...
+YANGMING_API_KEY=...
+```
