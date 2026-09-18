@@ -1,0 +1,110 @@
+name: Live carrier API check
+
+on:
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: "Origin UN/LOCODE"
+        required: true
+        default: "CNNGB"
+      destination:
+        description: "Destination UN/LOCODE"
+        required: true
+        default: "INNSA"
+      weeks:
+        description: "Search window in weeks"
+        required: true
+        default: "4"
+
+jobs:
+  live-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      MAERSK_ENABLED: ${{ secrets.MAERSK_API_KEY != '' }}
+      MAERSK_API_KEY: ${{ secrets.MAERSK_API_KEY }}
+
+      CMACGM_ENABLED: ${{ (secrets.CMACGM_API_KEY != '') || (secrets.CMACGM_OAUTH_CLIENT_ID != '') }}
+      CMACGM_API_KEY: ${{ secrets.CMACGM_API_KEY }}
+      CMACGM_OAUTH_CLIENT_ID: ${{ secrets.CMACGM_OAUTH_CLIENT_ID }}
+      CMACGM_OAUTH_CLIENT_SECRET: ${{ secrets.CMACGM_OAUTH_CLIENT_SECRET }}
+
+      MSC_ENABLED: ${{ secrets.MSC_BASE_URL != '' }}
+      MSC_BASE_URL: ${{ secrets.MSC_BASE_URL }}
+      MSC_API_KEY: ${{ secrets.MSC_API_KEY }}
+      MSC_BEARER_TOKEN: ${{ secrets.MSC_BEARER_TOKEN }}
+      MSC_OAUTH_TOKEN_URL: ${{ secrets.MSC_OAUTH_TOKEN_URL }}
+      MSC_OAUTH_CLIENT_ID: ${{ secrets.MSC_OAUTH_CLIENT_ID }}
+      MSC_OAUTH_CLIENT_SECRET: ${{ secrets.MSC_OAUTH_CLIENT_SECRET }}
+
+      ONE_ENABLED: ${{ secrets.ONE_BASE_URL != '' }}
+      ONE_BASE_URL: ${{ secrets.ONE_BASE_URL }}
+      ONE_API_KEY: ${{ secrets.ONE_API_KEY }}
+      ONE_BEARER_TOKEN: ${{ secrets.ONE_BEARER_TOKEN }}
+      ONE_OAUTH_TOKEN_URL: ${{ secrets.ONE_OAUTH_TOKEN_URL }}
+      ONE_OAUTH_CLIENT_ID: ${{ secrets.ONE_OAUTH_CLIENT_ID }}
+      ONE_OAUTH_CLIENT_SECRET: ${{ secrets.ONE_OAUTH_CLIENT_SECRET }}
+
+      EVERGREEN_ENABLED: ${{ secrets.EVERGREEN_BASE_URL != '' }}
+      EVERGREEN_BASE_URL: ${{ secrets.EVERGREEN_BASE_URL }}
+      EVERGREEN_API_KEY: ${{ secrets.EVERGREEN_API_KEY }}
+      EVERGREEN_BEARER_TOKEN: ${{ secrets.EVERGREEN_BEARER_TOKEN }}
+      EVERGREEN_OAUTH_TOKEN_URL: ${{ secrets.EVERGREEN_OAUTH_TOKEN_URL }}
+      EVERGREEN_OAUTH_CLIENT_ID: ${{ secrets.EVERGREEN_OAUTH_CLIENT_ID }}
+      EVERGREEN_OAUTH_CLIENT_SECRET: ${{ secrets.EVERGREEN_OAUTH_CLIENT_SECRET }}
+
+      HMM_ENABLED: ${{ secrets.HMM_BASE_URL != '' }}
+      HMM_BASE_URL: ${{ secrets.HMM_BASE_URL }}
+      HMM_API_KEY: ${{ secrets.HMM_API_KEY }}
+      HMM_BEARER_TOKEN: ${{ secrets.HMM_BEARER_TOKEN }}
+      HMM_OAUTH_TOKEN_URL: ${{ secrets.HMM_OAUTH_TOKEN_URL }}
+      HMM_OAUTH_CLIENT_ID: ${{ secrets.HMM_OAUTH_CLIENT_ID }}
+      HMM_OAUTH_CLIENT_SECRET: ${{ secrets.HMM_OAUTH_CLIENT_SECRET }}
+
+      HAPAG_ENABLED: ${{ secrets.HAPAG_BASE_URL != '' }}
+      HAPAG_BASE_URL: ${{ secrets.HAPAG_BASE_URL }}
+      HAPAG_API_KEY: ${{ secrets.HAPAG_API_KEY }}
+      HAPAG_BEARER_TOKEN: ${{ secrets.HAPAG_BEARER_TOKEN }}
+      HAPAG_OAUTH_TOKEN_URL: ${{ secrets.HAPAG_OAUTH_TOKEN_URL }}
+      HAPAG_OAUTH_CLIENT_ID: ${{ secrets.HAPAG_OAUTH_CLIENT_ID }}
+      HAPAG_OAUTH_CLIENT_SECRET: ${{ secrets.HAPAG_OAUTH_CLIENT_SECRET }}
+
+      ZIM_ENABLED: ${{ secrets.ZIM_BASE_URL != '' }}
+      ZIM_BASE_URL: ${{ secrets.ZIM_BASE_URL }}
+      ZIM_API_KEY: ${{ secrets.ZIM_API_KEY }}
+      ZIM_BEARER_TOKEN: ${{ secrets.ZIM_BEARER_TOKEN }}
+      ZIM_OAUTH_TOKEN_URL: ${{ secrets.ZIM_OAUTH_TOKEN_URL }}
+      ZIM_OAUTH_CLIENT_ID: ${{ secrets.ZIM_OAUTH_CLIENT_ID }}
+      ZIM_OAUTH_CLIENT_SECRET: ${{ secrets.ZIM_OAUTH_CLIENT_SECRET }}
+
+      YANGMING_ENABLED: ${{ secrets.YANGMING_BASE_URL != '' }}
+      YANGMING_BASE_URL: ${{ secrets.YANGMING_BASE_URL }}
+      YANGMING_API_KEY: ${{ secrets.YANGMING_API_KEY }}
+      YANGMING_BEARER_TOKEN: ${{ secrets.YANGMING_BEARER_TOKEN }}
+      YANGMING_OAUTH_TOKEN_URL: ${{ secrets.YANGMING_OAUTH_TOKEN_URL }}
+      YANGMING_OAUTH_CLIENT_ID: ${{ secrets.YANGMING_OAUTH_CLIENT_ID }}
+      YANGMING_OAUTH_CLIENT_SECRET: ${{ secrets.YANGMING_OAUTH_CLIENT_SECRET }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run live API diagnostics
+        run: >
+          python -m scripts.live_check
+          --origin "${{ inputs.origin }}"
+          --destination "${{ inputs.destination }}"
+          --weeks "${{ inputs.weeks }}"
