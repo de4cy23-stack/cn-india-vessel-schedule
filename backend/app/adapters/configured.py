@@ -77,11 +77,29 @@ class CmaCgmAdapter(EnvDcsaAdapter):
     default_path = "/v1/point-to-point-routes"
 
 
+class MscAdapter(EnvDcsaAdapter):
+    slug = "msc"
+    name = "MSC"
+    code = "MSCU"
+    env_prefix = "MSC"
+    # MSC states its Point-to-Point Commercial Schedules endpoint is live and DCSA compliant.
+    default_path = "/v1/point-to-point-routes"
+
+
 class OneAdapter(EnvDcsaAdapter):
     slug = "one"
     name = "Ocean Network Express (ONE)"
     code = "ONEY"
     env_prefix = "ONE"
+    default_path = "/v1/point-to-point-routes"
+
+
+class EvergreenAdapter(EnvDcsaAdapter):
+    slug = "evergreen"
+    name = "Evergreen Marine"
+    code = "EGLV"
+    env_prefix = "EVERGREEN"
+    default_path = "/v1/point-to-point-routes"
 
 
 class HmmAdapter(EnvDcsaAdapter):
@@ -96,3 +114,4 @@ class HapagLloydAdapter(EnvDcsaAdapter):
     name = "Hapag-Lloyd"
     code = "HLCU"
     env_prefix = "HAPAG"
+    default_path = "/v1/point-to-point-routes"
