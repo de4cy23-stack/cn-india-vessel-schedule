@@ -120,3 +120,19 @@ class HapagLloydAdapter(EnvDcsaAdapter):
     code = "HLCU"
     env_prefix = "HAPAG"
     default_path = "/v1/point-to-point-routes"
+
+
+class ZimAdapter(EnvDcsaAdapter):
+    slug = "zim"
+    name = "ZIM"
+    code = "ZIMU"
+    env_prefix = "ZIM"
+    default_path = "/v1/point-to-point-routes"
+
+
+class YangMingAdapter(EnvDcsaAdapter):
+    slug = "yang-ming"
+    name = "Yang Ming"
+    code = "YMLU"
+    env_prefix = "YANGMING"
+    default_path = "/v1/point-to-point-routes"
