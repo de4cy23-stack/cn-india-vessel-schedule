@@ -13,6 +13,8 @@ This project prefers official carrier APIs over website scraping.
 | COSCO | Official/public source still being validated | Reserved | Do not depend on an undocumented web endpoint |
 | OOCL | Official/public source still being validated | Reserved | Do not depend on an undocumented web endpoint |
 | Evergreen | DCSA Commercial Schedules 1.0 implementation | Adapter implemented, endpoint supplied by onboarding | DCSA lists Commercial Schedules 1.0 as implemented |
+| ZIM | ZIM API Portal - Vessel Schedule / DCSA Commercial Schedules | Adapter implemented, endpoint supplied by subscription | ZIM publishes a Point-to-Point Vessel Schedule product and documents OAuth2 Client Credentials |
+| Yang Ming | Yang Ming API Portal / DCSA Commercial Schedules | Adapter implemented, endpoint supplied by subscription | DCSA currently certifies Commercial Schedules Point-to-Point |
 
 ## Why DCSA is the internal model
 
