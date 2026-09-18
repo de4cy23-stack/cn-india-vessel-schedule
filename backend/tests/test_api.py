@@ -6,6 +6,12 @@ from app.main import app
 client = TestClient(app)
 
 
+def test_web_ui_is_served():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "中印船期查询" in response.text
+
+
 def test_ports_endpoint():
     response = client.get("/ports")
     assert response.status_code == 200
