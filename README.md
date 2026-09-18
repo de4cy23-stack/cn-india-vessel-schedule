@@ -111,3 +111,21 @@ pytest -q
 ```
 
 GitHub Actions 也会在 backend 代码发生变化时运行测试。
+
+
+## 实时 API 连通性诊断
+
+配置好 `backend/.env` 后，可以一次检查所有船司：
+
+```bash
+cd backend
+python -m scripts.live_check --origin CNNGB --destination INNSA --weeks 4
+```
+
+只检查 Maersk：
+
+```bash
+python -m scripts.live_check --carrier maersk --origin CNSHA --destination INMUN
+```
+
+诊断程序不会输出 API Key / Client Secret。详细申请方式见 `docs/get-api-access.md`。
