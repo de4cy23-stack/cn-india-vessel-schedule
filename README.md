@@ -30,10 +30,10 @@
 | ONE | ONEY | Adapter 已实现 | 官方 DCSA Point-to-Point Schedule |
 | HMM | HDMU | Adapter 已实现 | 官方 Port-to-Port Schedule |
 | Hapag-Lloyd | HLCU | Adapter 已实现 | 官方 Commercial Schedule API |
-| MSC | MSCU | 预留 | 待验证稳定官方接口 |
+| MSC | MSCU | Adapter 已实现 | 官方 DCSA Commercial Schedules Point-to-Point |
 | COSCO | COSU | 预留 | 待验证稳定官方接口 |
 | OOCL | OOLU | 预留 | 待验证稳定官方接口 |
-| Evergreen | EGLV | 预留 | 待验证稳定官方接口 |
+| Evergreen | EGLV | Adapter 已实现 | 官方 DCSA Commercial Schedules |
 
 **Adapter 已实现不等于无需凭证即可实时查询。** 各船司的 Developer/API Portal 仍可能要求订阅、API Key 或 OAuth2 凭证。
 
