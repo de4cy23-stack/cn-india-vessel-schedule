@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import asyncio
 from datetime import date, timedelta
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.adapters import get_carriers, get_enabled_adapters
 from app.models import CarrierQueryStatus, Schedule, ScheduleSearchResponse
@@ -11,9 +14,17 @@ from app.ports import PORTS, resolve_port
 
 app = FastAPI(
     title="CN-India Vessel Schedule Aggregator",
-    version="0.2.0",
+    version="0.3.0",
     description="Aggregate ETD/ETA schedules from multiple ocean carriers.",
 )
+
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+app.mount("/app", StaticFiles(directory=STATIC_DIR, html=True), name="app")
+
+
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/app/")
 
 
 @app.get("/health")
