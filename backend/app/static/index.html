@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>中印船期查询</title>
+  <style>
+    :root { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #172033; background: #f5f7fb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 32px 20px 56px; }
+    h1 { margin: 0 0 6px; font-size: 28px; }
+    .sub { margin: 0 0 24px; color: #667085; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 18px; box-shadow: 0 4px 18px rgba(16,24,40,.04); margin-bottom: 18px; }
+    .form { display: grid; grid-template-columns: 1.3fr 1.3fr 1fr .8fr auto; gap: 12px; align-items: end; }
+    label { display: block; font-size: 12px; color: #667085; margin-bottom: 6px; font-weight: 600; }
+    select, input, button { width: 100%; height: 42px; border-radius: 9px; border: 1px solid #d0d5dd; padding: 0 12px; background: #fff; font: inherit; }
+    button { min-width: 110px; border: 0; background: #101828; color: #fff; cursor: pointer; font-weight: 700; }
+    button:disabled { opacity: .55; cursor: wait; }
+    .status-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill { display: inline-flex; gap: 6px; align-items: center; padding: 7px 10px; border-radius: 999px; background: #f2f4f7; font-size: 12px; }
+    .pill.ok { background: #ecfdf3; color: #027a48; }
+    .pill.error { background: #fef3f2; color: #b42318; }
+    .pill.off { color: #667085; }
+    .meta { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:12px; color:#667085; font-size:13px; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; min-width: 940px; }
+    th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid #eaecf0; font-size: 13px; vertical-align: top; }
+    th { color: #475467; font-size: 12px; background: #fafafa; position: sticky; top: 0; }
+    td strong { font-size: 14px; }
+    .muted { color: #98a2b3; }
+    .direct { color: #027a48; }
+    .transfer { color: #b54708; }
+    .empty { padding: 28px; text-align: center; color: #667085; }
+    .errorbox { display:none; margin-bottom:18px; padding:12px 14px; border-radius:9px; background:#fef3f2; color:#b42318; }
+    @media (max-width: 860px) { .form { grid-template-columns: 1fr 1fr; } .form button { grid-column: 1 / -1; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>中印船期查询</h1>
+    <p class="sub">汇总主要船司 ETD / ETA · 宁波 / 上海 → 印度</p>
+
+    <section class="card">
+      <form id="searchForm" class="form">
+        <div>
+          <label for="origin">起运港 POL</label>
+          <select id="origin">
+            <option value="CNNGB">宁波 Ningbo</option>
+            <option value="CNSHA">上海 Shanghai</option>
+          </select>
+        </div>
+        <div>
+          <label for="destination">目的港 POD</label>
+          <select id="destination">
+            <option value="INNSA">Nhava Sheva / JNPT</option>
+            <option value="INMUN">Mundra</option>
+            <option value="INMAA">Chennai</option>
+            <option value="INPAV">Pipavav</option>
+            <option value="INHZA">Hazira</option>
+            <option value="INCCU">Kolkata</option>
+          </select>
+        </div>
+        <div>
+          <label for="dateFrom">开始日期</label>
+          <input id="dateFrom" type="date" required>
+        </div>
+        <div>
+          <label for="weeks">查询范围</label>
+          <select id="weeks">
+            <option value="2">未来 2 周</option>
+            <option value="4" selected>未来 4 周</option>
+            <option value="6">未来 6 周</option>
+            <option value="8">未来 8 周</option>
+          </select>
+        </div>
+        <button id="submitBtn" type="submit">查询船期</button>
+      </form>
+    </section>
+
+    <div id="errorbox" class="errorbox"></div>
+
+    <section class="card">
+      <div class="meta">
+        <strong>船司状态</strong>
+        <span id="carrierHint">正在读取配置…</span>
+      </div>
+      <div id="carrierStatus" class="status-grid"></div>
+    </section>
+
+    <section class="card">
+      <div class="meta">
+        <strong>船期结果</strong>
+        <span id="resultMeta">尚未查询</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>船司</th>
+              <th>船名 / 航次</th>
+              <th>ETD 开船</th>
+              <th>ETA 到港</th>
+              <th>航程</th>
+              <th>方式</th>
+              <th>中转港</th>
+            </tr>
+          </thead>
+          <tbody id="results">
+            <tr><td colspan="7" class="empty">选择航线后点击“查询船期”</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("searchForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const resultsEl = document.getElementById("results");
+    const statusEl = document.getElementById("carrierStatus");
+    const carrierHint = document.getElementById("carrierHint");
+    const resultMeta = document.getElementById("resultMeta");
+    const errorbox = document.getElementById("errorbox");
+    const dateFrom = document.getElementById("dateFrom");
+
+    dateFrom.value = new Date().toISOString().slice(0, 10);
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function fmtDate(value) {
+      if (!value) return "—";
+      const d = new Date(value);
+      return Number.isNaN(d.getTime()) ? esc(value) : d.toLocaleString("zh-CN", { hour12: false });
+    }
+
+    async function loadCarriers() {
+      try {
+        const r = await fetch("/carriers");
+        const carriers = await r.json();
+        const configured = carriers.filter(x => x.configured);
+        carrierHint.textContent = "已配置 " + configured.length + " / " + carriers.length + " 家";
+        statusEl.innerHTML = carriers.map(c =>
+          '<span class="pill ' + (c.configured ? "ok" : "off") + '">' +
+          esc(c.name) + (c.configured ? " · 已配置" : " · 待配置") +
+          "</span>"
+        ).join("");
+      } catch {
+        carrierHint.textContent = "无法读取配置";
+      }
+    }
+
+    function renderStatuses(items) {
+      if (!items.length) {
+        statusEl.innerHTML = '<span class="pill off">当前没有启用且已配置凭证的船司</span>';
+        return;
+      }
+      statusEl.innerHTML = items.map(c =>
+        '<span class="pill ' + esc(c.status) + '" title="' + esc(c.error || "") + '">' +
+        esc(c.carrier) + " · " + (c.status === "ok" ? (c.count + " 条") : "查询失败") +
+        "</span>"
+      ).join("");
+    }
+
+    function renderRows(items) {
+      if (!items.length) {
+        resultsEl.innerHTML = '<tr><td colspan="7" class="empty">没有返回船期。请先检查船司 API 凭证是否已经配置并启用。</td></tr>';
+        return;
+      }
+
+      resultsEl.innerHTML = items.map(x => {
+        const routeClass = x.direct === true ? "direct" : (x.direct === false ? "transfer" : "muted");
+        const routeText = x.direct === true ? "直达" : (x.direct === false ? "中转" : "—");
+        return "<tr>" +
+          "<td><strong>" + esc(x.carrier) + "</strong><br><span class='muted'>" + esc(x.carrier_code) + "</span></td>" +
+          "<td>" + esc(x.vessel || "—") + "<br><span class='muted'>" + esc(x.voyage || "—") + "</span></td>" +
+          "<td>" + fmtDate(x.etd) + "</td>" +
+          "<td>" + fmtDate(x.eta) + "</td>" +
+          "<td>" + (x.transit_days == null ? "—" : esc(x.transit_days) + " 天") + "</td>" +
+          "<td class='" + routeClass + "'>" + routeText + "</td>" +
+          "<td>" + esc((x.transshipment_ports || []).join(" → ") || "—") + "</td>" +
+          "</tr>";
+      }).join("");
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = "查询中…";
+      errorbox.style.display = "none";
+
+      const params = new URLSearchParams({
+        origin: document.getElementById("origin").value,
+        destination: document.getElementById("destination").value,
+        date_from: dateFrom.value,
+        weeks: document.getElementById("weeks").value,
+      });
+
+      try {
+        const response = await fetch("/search?" + params.toString());
+        const body = await response.json();
+
+        if (!response.ok) {
+          throw new Error(body.detail || "查询失败");
+        }
+
+        renderStatuses(body.carriers || []);
+        renderRows(body.results || []);
+        resultMeta.textContent =
+          body.origin + " → " + body.destination +
+          " · " + body.date_from + " 至 " + body.date_to +
+          " · " + (body.results || []).length + " 条";
+      } catch (err) {
+        errorbox.textContent = err.message || String(err);
+        errorbox.style.display = "block";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "查询船期";
+      }
+    });
+
+    loadCarriers();
+  </script>
+</body>
+</html>
