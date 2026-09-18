@@ -27,6 +27,7 @@ RESERVED = [
         code="MSCU",
         status="reserved",
         integration="official/public interface pending verification",
+        configured=False,
     ),
     CarrierInfo(
         slug="cosco",
@@ -34,6 +35,7 @@ RESERVED = [
         code="COSU",
         status="reserved",
         integration="official/public interface pending verification",
+        configured=False,
     ),
     CarrierInfo(
         slug="oocl",
@@ -41,6 +43,7 @@ RESERVED = [
         code="OOLU",
         status="reserved",
         integration="official/public interface pending verification",
+        configured=False,
     ),
     CarrierInfo(
         slug="evergreen",
@@ -48,6 +51,7 @@ RESERVED = [
         code="EGLV",
         status="reserved",
         integration="official/public interface pending verification",
+        configured=False,
     ),
 ]
 
@@ -59,25 +63,28 @@ def _enabled(prefix: str) -> bool:
 def get_enabled_adapters():
     adapters = []
     for prefix, adapter_cls in READY:
-        if _enabled(prefix):
-            adapter = adapter_cls()
-            if adapter.configured and adapter.point_to_point_path:
-                adapters.append(adapter)
+        adapter = adapter_cls()
+        if _enabled(prefix) and adapter.configured and adapter.point_to_point_path:
+            adapters.append(adapter)
     return adapters
 
 
 def get_carriers() -> list[CarrierInfo]:
     carriers: list[CarrierInfo] = []
+
     for prefix, adapter_cls in READY:
         adapter = adapter_cls()
+        configured = bool(adapter.configured and adapter.point_to_point_path)
         carriers.append(
             CarrierInfo(
                 slug=adapter.slug,
                 name=adapter.name,
                 code=adapter.code,
-                status="ready" if _enabled(prefix) and adapter.configured and adapter.point_to_point_path else "disabled",
+                status="ready" if configured else "disabled",
                 integration="official schedule API",
+                configured=configured,
             )
         )
+
     carriers.extend(RESERVED)
     return carriers
